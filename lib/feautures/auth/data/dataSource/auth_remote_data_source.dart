@@ -96,4 +96,30 @@ class AuthRemoteDataSource {
       _apiClient.handleError(e);
     }
   }
+
+  Future<void> deleteAccount() async {
+    try {
+      await _apiClient.dio.delete(ApiEndpoints.deleteAccount);
+    } catch (e) {
+      _apiClient.handleError(e);
+    }
+  }
+
+  /// PATCH /api/v1/user/profile — only fullName/phoneNumber are editable;
+  /// omit a field to leave it unchanged server-side.
+  Future<UserResponseModel> updateProfile({
+    String? fullName,
+    String? phoneNumber,
+  }) async {
+    try {
+      final response = await _apiClient.dio.patch(ApiEndpoints.userProfile, data: {
+        if (fullName != null) 'fullName': fullName,
+        if (phoneNumber != null) 'phoneNumber': phoneNumber,
+      });
+      final data = response.data['data'] as Map<String, dynamic>;
+      return UserResponseModel.fromJson(data);
+    } catch (e) {
+      _apiClient.handleError(e);
+    }
+  }
 }

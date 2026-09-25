@@ -23,4 +23,16 @@ class ApplianceRepository {
     categories.sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
     return categories;
   }
+
+  Future<List<Appliance>> searchAppliances(String query, {String? categoryId}) async {
+    final response = await _dio.get('/appliances/search', queryParameters: {
+      'search': query,
+      if (categoryId != null) 'categoryId': categoryId,
+    });
+    final list = response.data['data'] as List;
+    return list
+        .map((json) => Appliance.fromJson(json as Map<String, dynamic>))
+        .where((a) => a.active)
+        .toList();
+  }
 }

@@ -13,6 +13,9 @@ class ApplianceState {
     this.errorMessage,
     this.quantities = const {},
     this.wattageOverrides = const {},
+    this.searchQuery = '',
+    this.searchResults,
+    this.isSearching = false,
   });
 
   final ApplianceLoadStatus status;
@@ -21,6 +24,14 @@ class ApplianceState {
   final String? errorMessage;
   final Map<String, int> quantities;
   final Map<String, int> wattageOverrides;
+  final String searchQuery;
+  final List<Appliance>? searchResults;
+  final bool isSearching;
+
+  /// The list the UI should render: the full appliance list normally, or
+  /// the backend search results while a search query is active.
+  List<Appliance> get displayedAppliances =>
+      searchQuery.isEmpty ? appliances : (searchResults ?? const []);
 
   int quantityOf(String id) => quantities[id] ?? 0;
 
@@ -76,6 +87,9 @@ class ApplianceState {
     String? errorMessage,
     Map<String, int>? quantities,
     Map<String, int>? wattageOverrides,
+    String? searchQuery,
+    List<Appliance>? searchResults,
+    bool? isSearching,
   }) {
     return ApplianceState(
       status: status ?? this.status,
@@ -84,6 +98,9 @@ class ApplianceState {
       errorMessage: errorMessage,
       quantities: quantities ?? this.quantities,
       wattageOverrides: wattageOverrides ?? this.wattageOverrides,
+      searchQuery: searchQuery ?? this.searchQuery,
+      searchResults: searchResults ?? this.searchResults,
+      isSearching: isSearching ?? this.isSearching,
     );
   }
 }

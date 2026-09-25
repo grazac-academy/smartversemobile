@@ -12,6 +12,9 @@ import 'package:smartversemobile/core/storage/onboarding_storage.dart';
 import '../feautures/dashboard/dashboard_screen.dart';
 import '../feautures/dashboard/presentation/screens/load Calculator/presentation/screens/calculated.dart';
 import '../feautures/onboarding_screen.dart';
+import 'package:smartversemobile/feautures/dashboard/presentation/screens/account/presentation/screens/help_support_screen.dart';
+import 'package:smartversemobile/feautures/dashboard/presentation/screens/account/presentation/screens/location_screen.dart';
+import 'package:smartversemobile/feautures/dashboard/presentation/screens/account/presentation/screens/edit_profile_screen.dart';
 
 class AppRoute {
   static const String splash = '/';
@@ -26,6 +29,9 @@ class AppRoute {
   static const String createAccount = '/create_account';
   static const String createAccountSuccess = '/create_account_success';
   static const String login = '/login';
+  static const String helpSupport = 'helpSupport';
+  static const String location = 'location';
+  static const String editProfile = 'editProfile';
 
   static final routes = <String, Widget Function(BuildContext)>{
     splash: (context) => SplashScreen(
@@ -46,5 +52,8 @@ class AppRoute {
     createAccount: (context) => const CreateAccount(),
     createAccountSuccess: (context) => const CreateAccountSuccess(),
     login: (context) => const LoginScreen(),
+    helpSupport: (context) => const HelpSupportScreen(),
+    location: (context) => const LocationScreen(),
+    editProfile: (context) => const EditProfileScreen(),
   };
 }

@@ -115,12 +115,18 @@ class _LoadCalculatorState extends State<LoadCalculator> {
                       decoration: BoxDecoration(color: AppColors.main, border: Border.all(width: 0.97.w, color: const Color(0x0F0B1A33))),
                       child: Center(
                         child: AppButton(
-                          title: "Calculate my system",
-                          onTap: _isCalculating
-                              ? null
-                              : () async {
-                            setState(() => _isCalculating = true);
-                            final calcCubit = context.read<CalculationCubit>();
+                            title: "Calculate my system",
+                            onTap: _isCalculating
+                                ? null
+                                : () async {
+                              if (appliancesCount == 0) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text("Select appliances to calculate")),
+                                );
+                                return;
+                              }
+                              setState(() => _isCalculating = true);
+                              final calcCubit = context.read<CalculationCubit>();
                             calcCubit.setBackupHours(selectedHours);
                             calcCubit.setUsageMode(selectedMode == PowerMode.offGridSolar ? "OFF_GRID" : "BACKUP");
                             try {

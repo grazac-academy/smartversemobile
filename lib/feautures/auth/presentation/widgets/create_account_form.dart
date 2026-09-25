@@ -5,7 +5,7 @@ import 'package:smartversemobile/feautures/auth/presentation/cubit/register_stat
 import 'package:smartversemobile/feautures/auth/presentation/widgets/auth_submit_button.dart';
 import 'package:smartversemobile/feautures/auth/presentation/widgets/auth_text_field.dart';
 import 'package:smartversemobile/feautures/auth/presentation/widgets/password_strength_bar.dart';
-import 'package:smartversemobile/feautures/auth/presentation/screens/email_verification_screen.dart';
+import 'package:smartversemobile/feautures/auth/presentation/screens/personal_info_screen.dart';
 
 class CreateAccountForm extends StatefulWidget {
   const CreateAccountForm({super.key});
@@ -46,7 +46,7 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => EmailVerificationScreen(email: _emailController.text.trim()),
+              builder: (_) => PersonalInfoScreen(email: _emailController.text.trim()),
             ),
           );
         } else if (state is RegisterFailure) {
