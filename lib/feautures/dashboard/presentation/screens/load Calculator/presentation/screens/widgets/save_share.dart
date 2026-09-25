@@ -28,17 +28,21 @@ class SaveAndShareC extends StatelessWidget {
     this.bottomSheetContent,
   });
 
+  void _showSignInSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return bottomSheetContent ?? const SaveResultBottomSheet();
+      },
+    );
+  }
+
   Future<void> _handleSave(BuildContext context) async {
     // Signed out: show the sign in / create account sheet and stop.
     if (!TokenStorage.instance.isSignedIn) {
-      showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (context) {
-          return bottomSheetContent ?? const SaveResultBottomSheet();
-        },
-      );
+      _showSignInSheet(context);
       return;
     }
 
@@ -49,12 +53,22 @@ class SaveAndShareC extends StatelessWidget {
     final id = await save();
     if (!context.mounted) return;
 
+    if (id != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Saved to your account")),
+      );
+      return;
+    }
+
+    // Save failed because the session is no longer valid (expired token):
+    // the cubit cleared it, so show the sign in sheet, not an error.
+    if (!TokenStorage.instance.isSignedIn) {
+      _showSignInSheet(context);
+      return;
+    }
+
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          id != null ? "Saved to your account" : "Failed to save calculation",
-        ),
-      ),
+      const SnackBar(content: Text("Failed to save calculation")),
     );
   }
 

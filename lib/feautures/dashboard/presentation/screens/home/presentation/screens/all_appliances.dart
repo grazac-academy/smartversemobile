@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -23,6 +25,28 @@ class AllAppliances extends StatefulWidget {
 
 class _AllAppliancesState extends State<AllAppliances> {
   final TextEditingController search = TextEditingController();
+  Timer? _searchDebounce;
+
+  @override
+  void initState() {
+    super.initState();
+    search.addListener(_onSearchChanged);
+  }
+
+  void _onSearchChanged() {
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 400), () {
+      context.read<ApplianceCubit>().searchAppliances(search.text);
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchDebounce?.cancel();
+    search.removeListener(_onSearchChanged);
+    search.dispose();
+    super.dispose();
+  }
 
   Future<void> _editWattage(Appliance appliance, ApplianceState state) async {
     final result = await showEditWattageSheet(
@@ -97,12 +121,28 @@ class _AllAppliancesState extends State<AllAppliances> {
                     child: Column(
                       children: [
 
-                        ApplianceSelectableList(
-                          appliances: state.appliances,
-                          state: state,
-                          onQuantityChanged: (id, qty) => context.read<ApplianceCubit>().setQuantity(id, qty),
-                          onEditWattage: (a) => _editWattage(a, state),
-                        ),
+                        if (state.isSearching)
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 24.h),
+                            child: const CircularProgressIndicator(),
+                          )
+                        else if (state.searchQuery.isNotEmpty && state.displayedAppliances.isEmpty)
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 24.h),
+                            child: MText(
+                              inputText: "No appliances match your search",
+                              textColor: AppColors.textColor,
+                              weight: FontWeight.w500,
+                              size: 13.spMin,
+                            ),
+                          )
+                        else
+                          ApplianceSelectableList(
+                            appliances: state.displayedAppliances,
+                            state: state,
+                            onQuantityChanged: (id, qty) => context.read<ApplianceCubit>().setQuantity(id, qty),
+                            onEditWattage: (a) => _editWattage(a, state),
+                          ),
                         SizedBox(height: 74.34.h),
                         AddAppliances(hasSelection: hasSelection, onTap: () {}),
                       ],

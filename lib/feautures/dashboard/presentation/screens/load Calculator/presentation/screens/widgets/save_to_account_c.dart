@@ -8,6 +8,7 @@ import '../../../../../../../../app/theme/app_colors.dart';
 import '../../../../../../../../core/widgets/app_button.dart';
 import '../../../../../../../../core/widgets/m_text.dart';
 import '../../../../../bloc/calculation_cubit.dart';
+import 'result_bottom_sheet.dart';
 
 class SaveToAccountC extends StatefulWidget {
   const SaveToAccountC({super.key});
@@ -20,11 +21,20 @@ class _SaveToAccountCState extends State<SaveToAccountC> {
   bool _isSaving = false;
   bool _isSaved = false;
 
+  void _showSignInSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const SaveResultBottomSheet(),
+    );
+  }
+
   Future<void> _handleSave() async {
     if (_isSaving || _isSaved) return;
 
-    if (TokenStorage.instance.accessToken == null) {
-      Navigator.pushNamed(context, AppRoute.login);
+    if (!TokenStorage.instance.isSignedIn) {
+      _showSignInSheet();
       return;
     }
 
@@ -40,6 +50,8 @@ class _SaveToAccountCState extends State<SaveToAccountC> {
         const SnackBar(content: Text("Calculation saved successfully")),
       );
       Navigator.pushNamed(context, '/saved-calculation-detail', arguments: id);
+    } else if (!TokenStorage.instance.isSignedIn) {
+      _showSignInSheet();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Failed to save calculation")),

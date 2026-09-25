@@ -3,7 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smartversemobile/app/app_route.dart';
 import 'package:smartversemobile/app/theme/app_colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:smartversemobile/core/di/service_locator.dart';
 import 'package:smartversemobile/core/network/token_storage.dart';
+import 'package:smartversemobile/feautures/auth/data/repository/auth_repository.dart';
 import 'package:smartversemobile/feautures/auth/presentation/widgets/auth_submit_button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartversemobile/feautures/dashboard/presentation/bloc/calculation_cubit.dart';
@@ -120,26 +122,28 @@ class _SignedInScreenState extends State<_SignedInScreen> {
                         email,
                         style: TextStyle(color: AppColors.appliancestext2.withOpacity(0.7), fontSize: 13.sp),
                       ),
-                      SizedBox(height: 6.h),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                        decoration: BoxDecoration(
-                          color: AppColors.successGreen.withOpacity(0.1),
-                          border: Border.all(color: AppColors.successGreen.withOpacity(0.5)),
-                          borderRadius: BorderRadius.circular(20.r),
+                      if (TokenStorage.instance.isEmailVerified) ...[
+                        SizedBox(height: 6.h),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                          decoration: BoxDecoration(
+                            color: AppColors.successGreen.withOpacity(0.1),
+                            border: Border.all(color: AppColors.successGreen.withOpacity(0.5)),
+                            borderRadius: BorderRadius.circular(20.r),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.check, size: 12.sp, color: AppColors.successGreen),
+                              SizedBox(width: 4.w),
+                              Text(
+                                "Verified",
+                                style: TextStyle(color: AppColors.successGreen, fontSize: 10.sp, fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          ),
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.check, size: 12.sp, color: AppColors.successGreen),
-                            SizedBox(width: 4.w),
-                            Text(
-                              "Verified",
-                              style: TextStyle(color: AppColors.successGreen, fontSize: 10.sp, fontWeight: FontWeight.w600),
-                            ),
-                          ],
-                        ),
-                      ),
+                      ],
                     ],
                   ),
                 ),
@@ -229,7 +233,7 @@ class _SignedInScreenState extends State<_SignedInScreen> {
                   iconBgColor: AppColors.usageC,
                   title: "My Profile",
                   subtitle: "Manage your personal information",
-                  onTap: () {},
+                  onTap: () => Navigator.pushNamed(context, AppRoute.editProfile),
                 ),
                 _buildDivider(),
                 _buildMenuItem(
@@ -275,7 +279,7 @@ class _SignedInScreenState extends State<_SignedInScreen> {
           ),
           SizedBox(height: 24.h),
           GestureDetector(
-            onTap: () {},
+            onTap: () => _confirmAndDeleteAccount(context),
             child: Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(vertical: 16.h),
@@ -325,19 +329,19 @@ class _SignedInScreenState extends State<_SignedInScreen> {
                 alignment: Alignment.center,
                 child: imageAsset != null
                     ? Image.asset(
-                        imageAsset,
-                        width: 22.sp,
-                        height: 22.sp,
-                        color: iconColor,
-                      )
+                  imageAsset,
+                  width: 22.sp,
+                  height: 22.sp,
+                  color: iconColor,
+                )
                     : SvgPicture.asset(
-                        svgAsset!,
-                        width: 22.sp,
-                        height: 22.sp,
-                        colorFilter: iconColor != null
-                            ? ColorFilter.mode(iconColor, BlendMode.srcIn)
-                            : null,
-                      ),
+                  svgAsset!,
+                  width: 22.sp,
+                  height: 22.sp,
+                  colorFilter: iconColor != null
+                      ? ColorFilter.mode(iconColor, BlendMode.srcIn)
+                      : null,
+                ),
               ),
               SizedBox(width: 16.w),
             ],
@@ -377,6 +381,51 @@ class _SignedInScreenState extends State<_SignedInScreen> {
 
   Widget _buildDivider() {
     return Divider(height: 1, thickness: 1, color: Colors.grey.withOpacity(0.1), indent: 16.w, endIndent: 16.w);
+  }
+
+  Future<void> _confirmAndDeleteAccount(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text("Delete account"),
+        content: const Text(
+          "This permanently deletes your account and all saved data. This can't be undone.",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text("Delete", style: TextStyle(color: Colors.red.shade700)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !context.mounted) return;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      await getIt<AuthRepository>().deleteAccount();
+      if (!context.mounted) return;
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Your account has been deleted")),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
   }
 }
 

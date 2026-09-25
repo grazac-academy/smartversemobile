@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartversemobile/feautures/dashboard/data/models/calculation_request.dart';
+import 'package:smartversemobile/core/error/exceptions.dart';
+import 'package:smartversemobile/core/network/token_storage.dart';
 import '../../data/repository/calculation_repository.dart';
 import 'appliance_state.dart';
 import 'calculation_state.dart';
@@ -51,6 +53,11 @@ class CalculationCubit extends Cubit<CalculationState> {
       return await _repository.saveCalculation(calculationId: state.result!.calculationId, label: label);
     } catch (e) {
       debugPrint("Save calculation failed: $e");
+      // Token missing/expired/rejected: treat the user as signed out so the UI
+      // can show the sign in / create account sheet instead of a generic error.
+      if (e is ServerException && (e.statusCode == 401 || e.statusCode == 403)) {
+        await TokenStorage.instance.clear();
+      }
       return null;
     }
   }

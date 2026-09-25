@@ -35,4 +35,19 @@ class ApplianceCubit extends Cubit<ApplianceState> {
 
     emit(state.copyWith(wattageOverrides: updated));
   }
+
+  Future<void> searchAppliances(String query) async {
+    final trimmed = query.trim();
+    emit(state.copyWith(searchQuery: trimmed));
+    if (trimmed.isEmpty) return;
+
+    emit(state.copyWith(isSearching: true));
+    try {
+      final results = await _repository.searchAppliances(trimmed);
+      emit(state.copyWith(searchResults: results, isSearching: false));
+    } catch (e) {
+      debugPrint("Appliance search failed: $e");
+      emit(state.copyWith(isSearching: false));
+    }
+  }
 }

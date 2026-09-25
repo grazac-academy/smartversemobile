@@ -6,6 +6,7 @@ class UserResponseModel {
   final String? state;
   final String? phoneNumber;
   final bool isEmailVerified;
+  final DateTime? createdAt;
 
   const UserResponseModel({
     required this.id,
@@ -15,6 +16,7 @@ class UserResponseModel {
     this.state,
     this.phoneNumber,
     required this.isEmailVerified,
+    this.createdAt,
   });
 
   factory UserResponseModel.fromJson(Map<String, dynamic> json) {
@@ -26,6 +28,16 @@ class UserResponseModel {
       state: json['state'] as String?,
       phoneNumber: json['phoneNumber'] as String?,
       isEmailVerified: json['isEmailVerified'] as bool? ?? false,
+      // Field name isn't confirmed in the Swagger spec yet — tries the
+      // common variants and stays null (chip just won't render) if none match.
+      createdAt: _parseDate(json['createdAt'] ?? json['created_at'] ?? json['joinedAt']),
     );
+  }
+
+  static DateTime? _parseDate(dynamic value) {
+    if (value is String && value.isNotEmpty) {
+      return DateTime.tryParse(value);
+    }
+    return null;
   }
 }

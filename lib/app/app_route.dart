@@ -14,6 +14,7 @@ import '../feautures/dashboard/presentation/screens/load Calculator/presentation
 import '../feautures/onboarding_screen.dart';
 import 'package:smartversemobile/feautures/dashboard/presentation/screens/account/presentation/screens/help_support_screen.dart';
 import 'package:smartversemobile/feautures/dashboard/presentation/screens/account/presentation/screens/location_screen.dart';
+import 'package:smartversemobile/feautures/dashboard/presentation/screens/account/presentation/screens/edit_profile_screen.dart';
 
 class AppRoute {
   static const String splash = '/';
@@ -30,6 +31,7 @@ class AppRoute {
   static const String login = '/login';
   static const String helpSupport = 'helpSupport';
   static const String location = 'location';
+  static const String editProfile = 'editProfile';
 
   static final routes = <String, Widget Function(BuildContext)>{
     splash: (context) => SplashScreen(
@@ -52,5 +54,6 @@ class AppRoute {
     login: (context) => const LoginScreen(),
     helpSupport: (context) => const HelpSupportScreen(),
     location: (context) => const LocationScreen(),
+    editProfile: (context) => const EditProfileScreen(),
   };
 }

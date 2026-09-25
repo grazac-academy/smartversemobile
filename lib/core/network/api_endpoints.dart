@@ -8,4 +8,5 @@ class ApiEndpoints {
   static const resendVerification = '/auth/resend-verification';
   static const verifyEmail = '/auth/verify-email';
   static const userProfile = '/user/profile';
+  static const deleteAccount = '/user/delete';
 }
