@@ -9,10 +9,7 @@ import 'package:smartversemobile/feautures/auth/presentation/widgets/auth_text_f
 import 'package:smartversemobile/feautures/auth/presentation/widgets/personal_info_header.dart';
 import 'package:smartversemobile/feautures/auth/presentation/widgets/user_type_selector.dart';
 
-// Shown right after register() succeeds (the OTP email is already on its
-// way), before the user enters the verification code. There's currently no
-// endpoint to persist userType/state/phoneNumber after registration — see
-// the fields' TODO in _handleCreateAccount.
+
 class PersonalInfoScreen extends StatefulWidget {
   const PersonalInfoScreen({super.key, required this.email});
 
@@ -41,10 +38,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       );
       return;
     }
-    // TODO: no backend endpoint exists yet to save _userType/_state/phone
-    // after registration (RegisterRequest only accepts them at sign-up).
-    // Once one exists (e.g. PATCH /user/profile), call it here before
-    // navigating on.
     _goToVerification();
   }
 

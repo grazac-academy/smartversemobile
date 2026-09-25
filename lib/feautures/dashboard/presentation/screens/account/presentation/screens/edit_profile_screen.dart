@@ -84,6 +84,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         _isVerified = updated.isEmailVerified;
         _joinedAt = updated.createdAt ?? _joinedAt;
       });
+      
+      await TokenStorage.instance.setUserInfo(
+        fullName: updated.fullName,
+        email: updated.email,
+        isEmailVerified: updated.isEmailVerified,
+      );
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Profile updated")),
       );

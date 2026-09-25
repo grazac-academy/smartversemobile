@@ -15,6 +15,8 @@ import 'package:smartversemobile/feautures/dashboard/presentation/screens/home/p
 import 'package:smartversemobile/feautures/dashboard/presentation/screens/home/presentation/screens/widgets/load_summary_banner.dart';
 
 import '../../../../../../../core/widgets/m_text.dart';
+import '../../../../../dashboard_screen.dart';
+
 
 class AllAppliances extends StatefulWidget {
   const AllAppliances({super.key});
@@ -144,7 +146,15 @@ class _AllAppliancesState extends State<AllAppliances> {
                             onEditWattage: (a) => _editWattage(a, state),
                           ),
                         SizedBox(height: 74.34.h),
-                        AddAppliances(hasSelection: hasSelection, onTap: () {}),
+                        AddAppliances(
+                          hasSelection: hasSelection, 
+                          onTap: hasSelection ? () {
+                            Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (_) => const DashboardScreen(initialIndex: 1)),
+                              (route) => false,
+                            );
+                          } : () {},
+                        ),
                       ],
                     ),
                   ),

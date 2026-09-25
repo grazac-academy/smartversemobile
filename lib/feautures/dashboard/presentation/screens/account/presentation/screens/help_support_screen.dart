@@ -63,7 +63,7 @@ class HelpSupportScreen extends StatelessWidget {
               ),
               SizedBox(height: 32.h),
               Text("FREQUENTLY ASKED QUESTIONS", style: _sectionTitleStyle()),
-              SizedBox(height: 77.h),
+              SizedBox(height: 14.h),
               FaqItem(question: "How does SmartVert calculate my solar system size?", answer: "SmartVert adds up the wattage of all your selected appliances, applies a 25% safety margin and accounts for surge loads (like fridges and ACs that draw 3–5× their running wattage at startup). It then factors in your daily usage hours to determine battery capacity and solar panel needs."),
               FaqItem(question: "What is the difference between Backup mode and Off-grid mode?", answer: "SmartVert adds up the wattage of all your selected appliances, applies a 25% safety margin and accounts for surge loads (like fridges and ACs that draw 3–5× their running wattage at startup). It then factors in your daily usage hours to determine battery capacity and solar panel needs.",),
               FaqItem(question: "Why is my inverter size larger than I expected?", answer: "Backup mode assumes you still have grid power part of the time and sizes your system to cover outages. Off-grid mode sizes a system that can run entirely without grid power — it recommends larger batteries and more solar panels.",),

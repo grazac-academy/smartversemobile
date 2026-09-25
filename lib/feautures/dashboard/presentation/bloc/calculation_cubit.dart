@@ -50,7 +50,11 @@ class CalculationCubit extends Cubit<CalculationState> {
   Future<String?> saveCalculation(String label) async {
     if (state.result == null) return null;
     try {
-      return await _repository.saveCalculation(calculationId: state.result!.calculationId, label: label);
+      final id = await _repository.saveCalculation(calculationId: state.result!.calculationId, label: label);
+      if (id != null) {
+        await loadSavedCalculations();
+      }
+      return id;
     } catch (e) {
       debugPrint("Save calculation failed: $e");
       // Token missing/expired/rejected: treat the user as signed out so the UI
@@ -69,6 +73,10 @@ class CalculationCubit extends Cubit<CalculationState> {
     } catch (e) {
       debugPrint("Loading saved calculations failed: $e");
     }
+  }
+
+  void clearSavedCalculations() {
+    emit(state.copyWith(savedCalculations: const []));
   }
 
   Future<void> loadSavedCalculationDetail(String id) async {
