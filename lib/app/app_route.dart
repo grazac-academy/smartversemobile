@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:smartversemobile/feautures/dashboard/presentation/screens/home/presentation/screens/all_appliances.dart';
-import 'package:smartversemobile/feautures/dashboard/presentation/screens/home/presentation/screens/kitchen_screen.dart';
 import 'package:smartversemobile/feautures/dashboard/presentation/screens/load%20Calculator/presentation/screens/load_calculator_backup_only.dart';
 import 'package:smartversemobile/feautures/dashboard/presentation/screens/load%20Calculator/presentation/screens/saved_calculation.dart';
 import 'package:smartversemobile/feautures/dashboard/presentation/screens/load%20Calculator/presentation/screens/show_maths.dart';
@@ -43,7 +42,7 @@ class AppRoute {
       Navigator.pushReplacementNamed(context, AppRoute.dashboardScreen);
     }),
     dashboardScreen: (context) => const DashboardScreen(),
-    kitchenScreen: (context) => const KitchenScreen(),
+
     calculated: (context) => const CalculatedScreen(),
     loadCalculatorBackupOnly: (context)=> const LoadCalculatorBackupOnly(),
     showMaths: (context)=> const ShowMaths(),

@@ -11,7 +11,9 @@ import 'package:smartversemobile/feautures/dashboard/presentation/screens/home/p
 import 'package:smartversemobile/feautures/dashboard/presentation/screens/home/presentation/screens/widgets/load_summary_banner.dart';
 
 import '../../../../../../../app/theme/app_colors.dart';
+import '../../../../../dashboard_screen.dart';
 import '../../../../../data/models/appliance.dart';
+
 
 class CategoryApplianceScreen extends StatefulWidget {
   const CategoryApplianceScreen({super.key, required this.categoryId, required this.title});
@@ -92,7 +94,12 @@ class _CategoryApplianceScreenState extends State<CategoryApplianceScreen> {
                         ),
                         SizedBox(height: 60.h),
                         GestureDetector(
-                          onTap: hasSelection ? () {} : null,
+                          onTap: hasSelection ? () {
+                            Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (_) => const DashboardScreen(initialIndex: 1)),
+                              (route) => false,
+                            );
+                          } : null,
                           child: Container(
                             width: 390.w,
                             height: 54.h,

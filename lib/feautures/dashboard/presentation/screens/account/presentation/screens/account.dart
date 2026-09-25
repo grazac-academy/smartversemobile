@@ -60,10 +60,13 @@ class _SignedInScreenState extends State<_SignedInScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final name = TokenStorage.instance.fullName ?? "";
-    final email = TokenStorage.instance.email ?? "";
+    return AnimatedBuilder(
+      animation: TokenStorage.instance,
+      builder: (context, child) {
+        final name = TokenStorage.instance.fullName ?? "";
+        final email = TokenStorage.instance.email ?? "";
 
-    return SingleChildScrollView(
+        return SingleChildScrollView(
       padding: EdgeInsets.all(20.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -272,7 +275,10 @@ class _SignedInScreenState extends State<_SignedInScreen> {
                   isLogout: true,
                   title: "Log Out",
                   subtitle: "Sign out of your account",
-                  onTap: () => TokenStorage.instance.clear(),
+                  onTap: () {
+                    context.read<CalculationCubit>().clearSavedCalculations();
+                    TokenStorage.instance.clear();
+                  },
                 ),
               ],
             ),
@@ -298,6 +304,8 @@ class _SignedInScreenState extends State<_SignedInScreen> {
           SizedBox(height: 40.h),
         ],
       ),
+    );
+    },
     );
   }
 
@@ -406,25 +414,31 @@ class _SignedInScreenState extends State<_SignedInScreen> {
 
     if (confirmed != true || !context.mounted) return;
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => const Center(child: CircularProgressIndicator()),
+    final rootNavigator = Navigator.of(context, rootNavigator: true);
+    final messenger = ScaffoldMessenger.of(context);
+
+    rootNavigator.push(
+      DialogRoute<void>(
+        context: context,
+        barrierDismissible: false,
+
+        builder: (_) => const Center(child: CircularProgressIndicator()),
+      ),
     );
 
     try {
       await getIt<AuthRepository>().deleteAccount();
-      if (!context.mounted) return;
-      Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
+      rootNavigator.pop();
+      messenger.showSnackBar(
         const SnackBar(content: Text("Your account has been deleted")),
       );
+      if (context.mounted) {
+        context.read<CalculationCubit>().clearSavedCalculations();
+      }
+      await TokenStorage.instance.clear();
     } catch (e) {
-      if (!context.mounted) return;
-      Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
+      rootNavigator.pop();
+      messenger.showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
 }

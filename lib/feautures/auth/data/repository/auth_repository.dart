@@ -26,10 +26,6 @@ class AuthRepository {
       phoneNumber: phoneNumber,
     );
   }
-
-  /// Logs in, persists the tokens, then fetches the profile (the login
-  /// payload itself only carries tokens + verification status now) and
-  /// persists the user's name/email alongside them.
   Future<AuthResponseModel> login({
     required String email,
     required String password,
@@ -80,16 +76,11 @@ class AuthRepository {
     return _remoteDataSource.verifyEmail(email: email, otp: otp);
   }
 
-  /// Deletes the signed-in user's account on the server, then clears the
-  /// locally stored tokens/profile so the app drops back to signed-out.
   Future<void> deleteAccount() async {
     await _remoteDataSource.deleteAccount();
     await _tokenStorage.clear();
   }
 
-  /// Persists profile edits to the server, then refreshes the locally
-  /// cached name/email/verified flag from the response so the rest of
-  /// the app (e.g. TokenStorage listeners) picks up the change.
   Future<UserResponseModel> updateProfile({
     String? fullName,
     String? phoneNumber,
