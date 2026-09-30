@@ -30,7 +30,6 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    // Blob sizing/positioning as a fraction of the screen, taken from the design.
     final orangeSize = size.width * 0.78;
     final blueSize = size.width * 0.68;
 
@@ -39,7 +38,6 @@ class _SplashScreenState extends State<SplashScreen> {
       body: SizedBox.expand(
         child: Stack(
           children: [
-            // Orange glow (top, slightly left of centre)
             Positioned(
               left: size.width * 0.51 - orangeSize / 2,
               top: size.height * 0.264 - orangeSize / 2,
@@ -47,7 +45,6 @@ class _SplashScreenState extends State<SplashScreen> {
               height: orangeSize,
               child: Image.asset('assets/images/red.png', fit: BoxFit.contain),
             ),
-            // Blue glow (right, bleeds off the edge)
             Positioned(
               left: size.width * 0.79 - blueSize / 2,
               top: size.height * 0.628 - blueSize / 2,
@@ -55,7 +52,6 @@ class _SplashScreenState extends State<SplashScreen> {
               height: blueSize,
               child: Image.asset('assets/images/blue.png', fit: BoxFit.contain),
             ),
-            // Logo + wordmark + tagline (all one image)
             SafeArea(
               child: Center(
                 child: Image.asset(
