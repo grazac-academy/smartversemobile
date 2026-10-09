@@ -147,7 +147,7 @@ class _MyReportsScreenState extends State<MyReportsScreen> {
   }
 }
 
-// ───────────────────────── Header ─────────────────────────
+
 
 class _Header extends StatelessWidget {
   final bool showNew;
@@ -265,7 +265,7 @@ class _EmptyReports extends StatelessWidget {
   }
 }
 
-// ───────────────────────── Overview card ─────────────────────────
+
 
 class _OverviewCard extends StatelessWidget {
   final int total;
@@ -357,8 +357,6 @@ class _OverviewCard extends StatelessWidget {
   }
 }
 
-// ───────────────────────── Filter tabs ─────────────────────────
-
 class _FilterTabs extends StatelessWidget {
   final _ReportFilter selected;
   final ValueChanged<_ReportFilter> onChanged;
@@ -444,7 +442,7 @@ class _NoReportsInCategory extends StatelessWidget {
   }
 }
 
-// ───────────────────────── Report card ─────────────────────────
+
 
 class _ReportCard extends StatelessWidget {
   final CalculationDetail detail;

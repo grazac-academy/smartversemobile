@@ -1,16 +1,15 @@
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:media_store_plus/media_store_plus.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/service/calculation_pdf_service.dart';
 import '../../../dashboard/data/models/calculation_result.dart';
-
-
 
 enum PdfExportStatus { idle, generating, generated, failure }
 
@@ -31,6 +30,7 @@ class PdfExportCubit extends Cubit<PdfExportState> {
 
   final CalculationPdfService _service;
 
+
   Future<void> downloadPdf(CalculationResult result) async {
     if (state.isBusy) return;
 
@@ -40,33 +40,28 @@ class PdfExportCubit extends Cubit<PdfExportState> {
       final bytes = await _service.build(result);
       final name = _fileName();
 
+
       final openFile = await _writeTemp(bytes, 'open', name);
 
-      if (Platform.isAndroid) {
 
-        final saveFile = await _writeTemp(bytes, 'save', name);
-        await MediaStore.ensureInitialized();
-        MediaStore.appFolder = 'SmartVert';
-        final info = await MediaStore().saveFile(
-          tempFilePath: saveFile.path,
-          dirType: DirType.download,
-          dirName: DirName.download,
-        );
-        if (info == null || !info.isSuccessful) {
-          throw Exception('Could not save the PDF to Downloads');
-        }
-      } else {
 
-        final docs = await getApplicationDocumentsDirectory();
-        await openFile.copy('${docs.path}/$name');
+
+      final savedPath = await FilePicker.saveFile(
+        fileName: name,
+        bytes: Uint8List.fromList(bytes),
+      );
+
+      if (savedPath == null) {
+        emit(const PdfExportState());
+        return;
       }
 
       emit(PdfExportState(
         status: PdfExportStatus.generated,
         filePath: openFile.path,
-        message: 'PDF generated successfully',
-
+        message: 'PDF saved successfully',
       ));
+
 
       final opened = await OpenFilex.open(openFile.path, type: 'application/pdf');
       debugPrint('OpenFilex result: ${opened.type} - ${opened.message}');
@@ -98,8 +93,8 @@ class PdfExportCubit extends Cubit<PdfExportState> {
         ),
       );
     } catch (e, st) {
-
       debugPrint('PDF share failed: $e\n$st');
+
       emit(PdfExportState(status: PdfExportStatus.failure, message: _errorText('Could not share PDF', e)));
     }
   }

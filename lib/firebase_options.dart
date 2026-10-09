@@ -50,19 +50,18 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDTzIVcCrns_g6pmiER7ynALK0g0wBIJ0k',
-    appId: '1:1012825887714:android:5136c8bf2f5df753c35fbb',
-    messagingSenderId: '1012825887714',
-    projectId: 'smartvert-c927a',
-    storageBucket: 'smartvert-c927a.firebasestorage.app',
+    apiKey: 'AIzaSyCV58p8TFVISMv6nJ1EQeSuH8StR3Nag94',
+    appId: '1:174211204628:android:9e86646d293e568fcf0901',
+    messagingSenderId: '174211204628',
+    projectId: 'smart-vert',
+    storageBucket: 'smart-vert.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyD0wU27Fo4VSFEMfby_33nnjZ_wEvLENgk',
-    appId: '1:1012825887714:ios:ffe1bef5890a7f84c35fbb',
-    messagingSenderId: '1012825887714',
-    projectId: 'smartvert-c927a',
-    storageBucket: 'smartvert-c927a.firebasestorage.app',
-    iosBundleId: 'com.example.smartversemobile',
+    apiKey: 'AIzaSyC76RjipQ2DKhduAOg_BzOm_5YLPWLeRic',
+    appId: '1:174211204628:ios:bff87f9cc306e51ecf0901',
+    messagingSenderId: '174211204628',
+    projectId: 'smart-vert',
+    storageBucket: 'smart-vert.firebasestorage.app',
+    iosBundleId: 'com.smartvert.mobile',
   );
 }
