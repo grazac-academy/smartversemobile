@@ -16,7 +16,6 @@ class _CreateAccountSuccessState extends State<CreateAccountSuccess> {
     super.initState();
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        // Navigate to the next route (e.g., home or login)
         Navigator.pushReplacementNamed(context, 'savedCalculation');
       }
     });

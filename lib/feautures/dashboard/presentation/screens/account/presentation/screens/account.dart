@@ -12,6 +12,7 @@ import 'package:smartversemobile/feautures/dashboard/presentation/bloc/calculati
 import 'package:smartversemobile/feautures/dashboard/presentation/bloc/calculation_state.dart';
 import 'package:smartversemobile/feautures/dashboard/data/models/calculation_detail.dart';
 
+import '../../../load Calculator/presentation/screens/load_calculator.dart';
 import '../widgets/solar_j.dart';
 
 class Account extends StatelessWidget {

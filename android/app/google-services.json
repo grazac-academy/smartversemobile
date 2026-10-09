@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "1012825887714",
-    "project_id": "smartvert-c927a",
-    "storage_bucket": "smartvert-c927a.firebasestorage.app"
+    "project_number": "174211204628",
+    "project_id": "smart-vert",
+    "storage_bucket": "smart-vert.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1012825887714:android:5136c8bf2f5df753c35fbb",
+        "mobilesdk_app_id": "1:174211204628:android:9e86646d293e568fcf0901",
         "android_client_info": {
-          "package_name": "com.example.smartversemobile"
+          "package_name": "com.smartvert.mobile"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDTzIVcCrns_g6pmiER7ynALK0g0wBIJ0k"
+          "current_key": "AIzaSyCV58p8TFVISMv6nJ1EQeSuH8StR3Nag94"
         }
       ],
       "services": {
