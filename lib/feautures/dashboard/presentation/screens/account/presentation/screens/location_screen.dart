@@ -17,10 +17,7 @@ class _LocationScreenState extends State<LocationScreen> {
   String? _selectedState;
   final _cityController = TextEditingController();
   final _streetController = TextEditingController();
-
-  final List<String> _nigerianStates = [
-    'Lagos', 'Abuja', 'Kano', 'Rivers', 'Oyo', 'Kaduna', 'Ogun'
-  ];
+  final List<String> _nigerianStates = ['Lagos', 'Abuja', 'Kano', 'Rivers', 'Oyo', 'Kaduna', 'Ogun'];
 
   @override
   void dispose() {
@@ -44,81 +41,27 @@ class _LocationScreenState extends State<LocationScreen> {
                 children: [
                   AppbarIcon(onTap: () => Navigator.pop(context)),
                   SizedBox(width: 16.w),
-                  Text(
-                    "LOCATION",
-                    style: TextStyle(
-                      color: AppColors.appliancestext,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
+                  Text("LOCATION", style: TextStyle(fontFamily: 'Inter', color: AppColors.appliancestext, fontSize: 16.sp, fontWeight: FontWeight.w800, letterSpacing: 1.2)),
                 ],
               ),
               SizedBox(height: 17.h),
-              Text(
-                "Set your location below",
-                style: TextStyle(
-                  color: AppColors.primary,
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
+              Text("Set your location below", style: TextStyle(fontFamily: 'Inter', color: AppColors.primary, fontSize: 13.sp, fontWeight: FontWeight.w700)),
               SizedBox(height: 6.h),
-              Text(
-                "Location helps us give accurate solar data",
-                style: TextStyle(
-                  color: Color(0xff545454),
-                  fontSize: 11.sp,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
+              Text("Location helps us give accurate solar data", style: TextStyle(fontFamily: 'Inter', color: const Color(0xff545454), fontSize: 11.sp, fontWeight: FontWeight.w400)),
               SizedBox(height: 10.h),
-               InfoBanner(
-                 svgPath: "assets/icons/noto-v1_sun.svg",
-                text: "Your state affects Nigeria's solar irradiance data and peak sun hours used in your calculations. Lagos averages 4.5 peak hours; northern states get up to 6.",
-              ),
+              InfoBanner(svgPath: "assets/icons/noto-v1_sun.svg", text: "Your state affects Nigeria's solar irradiance data and peak sun hours used in your calculations. Lagos averages 4.5 peak hours; northern states get up to 6."),
               SizedBox(height: 44.h),
-              Text(
-                "LOCATION DETAILS",
-                style: TextStyle(
-                  color: Color(0xFFF07030),
-                  fontSize: 11.sp,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.2,
-                ),
-              ),
+              Text("LOCATION DETAILS", style: TextStyle(fontFamily: 'Inter', color: const Color(0xFFF07030), fontSize: 11.sp, fontWeight: FontWeight.w600, letterSpacing: 1.2)),
               SizedBox(height: 18.h),
-              CustomDropdown(
-                label: "State",
-                hintText: "Select your state...",
-                value: _selectedState,
-                items: _nigerianStates,
-                onChanged: (val) => setState(() => _selectedState = val),
-              ),
+              CustomDropdown(label: "State", hintText: "Select your state...", value: _selectedState, items: _nigerianStates, onChanged: (val) => setState(() => _selectedState = val)),
               SizedBox(height: 8.h),
-              Text(
-                "Your state determines solar irradiance in your area",
-                style: TextStyle(color: AppColors.textColor, fontSize: 12.sp, fontWeight: FontWeight.w400),
-              ),
+              Text("Your state determines solar irradiance in your area", style: TextStyle(fontFamily: 'Inter', color: AppColors.textColor, fontSize: 12.sp, fontWeight: FontWeight.w400)),
               SizedBox(height: 24.h),
-              CustomInputField(
-                label: "City / LGA",
-                hintText: "Type your city or LGA",
-                controller: _cityController,
-              ),
+              CustomInputField(label: "City / LGA", hintText: "Type your city or LGA", controller: _cityController),
               SizedBox(height: 24.h),
-              CustomInputField(
-                label: "Street address",
-                subLabel: "(optional)",
-                hintText: "e.g. 14 Bode Thomas Street",
-                controller: _streetController,
-              ),
+              CustomInputField(label: "Street address", subLabel: "(optional)", hintText: "e.g. 14 Bode Thomas Street", controller: _streetController),
               SizedBox(height: 8.h),
-              Text(
-                "Only used for personalisation, never shared",
-                style: TextStyle(color: Color(0XFF545454), fontSize: 12.sp, fontWeight: FontWeight.w400),
-              ),
+              Text("Only used for personalisation, never shared", style: TextStyle(fontFamily: 'Inter', color: const Color(0XFF545454), fontSize: 12.sp, fontWeight: FontWeight.w400)),
               SizedBox(height: 40.h),
             ],
           ),
