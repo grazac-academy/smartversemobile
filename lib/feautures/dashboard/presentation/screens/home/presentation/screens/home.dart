@@ -1,12 +1,10 @@
 import 'dart:async';
-
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/cupertino.dart' show CupertinoActivityIndicator;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smartversemobile/app/app_route.dart';
 import 'package:smartversemobile/app/theme/app_colors.dart';
-import 'package:smartversemobile/core/widgets/app_button.dart';
 import 'package:smartversemobile/core/widgets/m_text.dart';
 import 'package:smartversemobile/core/widgets/search_text_field.dart';
 import 'package:smartversemobile/feautures/dashboard/data/models/appliance.dart';
@@ -18,6 +16,7 @@ import 'package:smartversemobile/feautures/dashboard/presentation/screens/home/p
 import 'package:smartversemobile/feautures/dashboard/presentation/screens/home/presentation/screens/widgets/appliance_selectable_list.dart';
 import 'package:smartversemobile/feautures/dashboard/presentation/screens/home/presentation/screens/widgets/edit_wattage_sheet.dart';
 
+import '../../../../../../../core/widgets/category_slot.dart';
 import 'category_appliance_screen.dart';
 
 class Home extends StatefulWidget {
@@ -28,6 +27,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
   final TextEditingController search = TextEditingController();
   Timer? _searchDebounce;
 
@@ -60,10 +60,19 @@ class _HomeState extends State<Home> {
       currentWattage: state.wattageOf(appliance),
     );
     if (result != null) context.read<ApplianceCubit>().setWattage(appliance.id, result);
+
   }
 
-  void _openCategory(String categoryId, String title) {
-    Navigator.push(context, MaterialPageRoute(builder: (_) => CategoryApplianceScreen(categoryId: categoryId, title: title, )));
+  void _openCategory(CategorySlot slot) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => CategoryApplianceScreen(categoryName: slot.backendName, title: slot.title)),
+    );
+  }
+
+  int _addedCount(ApplianceState state, CategorySlot slot) {
+    final id = state.categoryIdByName(slot.backendName);
+    return id == null ? 0 : state.totalItemsInCategory(id);
   }
 
   @override
@@ -75,49 +84,59 @@ class _HomeState extends State<Home> {
           padding: EdgeInsets.symmetric(horizontal: 18.w),
           child: BlocBuilder<ApplianceCubit, ApplianceState>(
             builder: (context, state) {
-              if (state.status == ApplianceLoadStatus.loading || state.status == ApplianceLoadStatus.initial) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (state.status == ApplianceLoadStatus.error) {
-                return Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      MText(inputText: "Couldn't load appliances", textColor: AppColors.textColor, weight: FontWeight.w600, size: 16.spMin),
-                      SizedBox(height: 8.h),
-                      TextButton(
-                        onPressed: () => context.read<ApplianceCubit>().loadAppliances(),
-                        child: const Text("Try again"),
-                      ),
-                    ],
-                  ),
-                );
-              }
+              final isLoaded = state.status == ApplianceLoadStatus.loaded;
+              final isLoading = state.status == ApplianceLoadStatus.initial || state.status == ApplianceLoadStatus.loading;
+              final hasFailed = state.status == ApplianceLoadStatus.error;
 
               return SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 69.h),
+
                     MText(inputText: "Build Your Load", size: 16.spMin, weight: FontWeight.w600, textColor: AppColors.textColor),
                     SizedBox(height: 24.h),
-
-                    SearchTextField(search: search),
+                    IgnorePointer(
+                      ignoring: !isLoaded,
+                      child: Opacity(
+                        opacity: isLoaded ? 1 : 0.5,
+                        child: SearchTextField(search: search),
+                      ),
+                    ),
                     SizedBox(height: 20.h),
                     if (state.totalItems > 0) ...[
                       RunningTotalBanner(formattedLoad: state.formattedLoad, totalItems: state.totalItems),
                       SizedBox(height: 24.h),
                     ],
-                    GestureDetector(
-                      onTap: () => Navigator.pushNamed(context, AppRoute.allAppliances),
-                      child: Container(
-                        width: 176.w,
-                        height: 40.h,
-                        decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(14.r)),
-                        child: Center(
-                          child: MText(inputText: "ALL APPLIANCES", size: 16.spMin, weight: FontWeight.w700, textColor: AppColors.main),
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: isLoaded ? () => Navigator.pushNamed(context, AppRoute.allAppliances) : null,
+                          child: Opacity(
+                            opacity: isLoaded ? 1 : 0.5,
+                            child: Container(
+                              width: 176.w,
+                              height: 40.h,
+                              decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(14.r)),
+                              child: Center(
+                                child: MText(inputText: "ALL APPLIANCES", size: 16.spMin, weight: FontWeight.w700, textColor: AppColors.main),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                        SizedBox(width: 12.w),
+                        if (isLoading) const CupertinoActivityIndicator(radius: 9),
+
+                        if (hasFailed)
+                          GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () => context.read<ApplianceCubit>().loadAppliances(),
+                            child: Padding(
+                              padding: EdgeInsets.all(6.w),
+                              child: Icon(Icons.refresh, size: 22.sp, color: AppColors.primary),
+                            ),
+                          ),
+                      ],
                     ),
                     SizedBox(height: 14.h),
                     if (state.isSearching)
@@ -138,33 +157,36 @@ class _HomeState extends State<Home> {
                         ),
                       )
                     else if (state.searchQuery.isNotEmpty)
-                      ApplianceSelectableList(
-                        appliances: state.displayedAppliances,
-                        state: state,
-                        onQuantityChanged: (id, qty) => context.read<ApplianceCubit>().setQuantity(id, qty),
-                        onEditWattage: (a) => _editWattage(a, state),
-                      )
-                    else
-                      GridView.count(
-                        crossAxisCount: 2,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        crossAxisSpacing: 22.w,
-                        mainAxisSpacing: 33.h,
-                        childAspectRatio: 170 / 165,
-                        children: [
-                          for (final category in state.categories.where((c) => CategoryDisplayData.isSupported(c.name)))
-                            GestureDetector(
-                              onTap: () => _openCategory(category.id, category.name),
-                              child: ApplianceCategoryCard(
-                                imageAsset: CategoryDisplayData.forName(category.name).imageAsset,
-                                title: category.name,
-                                subtitle: CategoryDisplayData.forName(category.name).subtitle,
-                                addedCount: state.totalItemsInCategory(category.id),
+                        ApplianceSelectableList(
+                          appliances: state.displayedAppliances,
+                          state: state,
+                          onQuantityChanged: (id, qty) => context.read<ApplianceCubit>().setQuantity(id, qty),
+                          onEditWattage: (a) => _editWattage(a, state),
+                        )
+                      else
+                        GridView.count(
+                          crossAxisCount: 2,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          crossAxisSpacing: 22.w,
+                          mainAxisSpacing: 33.h,
+                          childAspectRatio: 170 / 165,
+                          children: [
+                            for (final slot in homeCategorySlots)
+                              GestureDetector(
+                                onTap: isLoaded ? () => _openCategory(slot) : null,
+                                child: Opacity(
+                                  opacity: isLoaded ? 1 : 0.5,
+                                  child: ApplianceCategoryCard(
+                                    imageAsset: CategoryDisplayData.forName(slot.backendName).imageAsset,
+                                    title: slot.title,
+                                    subtitle: CategoryDisplayData.forName(slot.backendName).subtitle,
+                                    addedCount: _addedCount(state, slot),
+                                  ),
+                                ),
                               ),
-                            ),
-                        ],
-                      ),
+                          ],
+                        ),
                   ],
                 ),
               );
@@ -172,6 +194,7 @@ class _HomeState extends State<Home> {
           ),
         ),
       ),
+
     );
   }
 }

@@ -28,8 +28,6 @@ class ApplianceState {
   final List<Appliance>? searchResults;
   final bool isSearching;
 
-  /// The list the UI should render: the full appliance list normally, or
-  /// the backend search results while a search query is active.
   List<Appliance> get displayedAppliances =>
       searchQuery.isEmpty ? appliances : (searchResults ?? const []);
 
@@ -102,5 +100,11 @@ class ApplianceState {
       searchResults: searchResults ?? this.searchResults,
       isSearching: isSearching ?? this.isSearching,
     );
+  }
+  String? categoryIdByName(String name) {
+    for (final c in categories) {
+      if (c.name == name) return c.id;
+    }
+    return null;
   }
 }

@@ -14,11 +14,10 @@ import '../../../../../../../app/theme/app_colors.dart';
 import '../../../../../dashboard_screen.dart';
 import '../../../../../data/models/appliance.dart';
 
-
 class CategoryApplianceScreen extends StatefulWidget {
-  const CategoryApplianceScreen({super.key, required this.categoryId, required this.title});
+  const CategoryApplianceScreen({super.key, required this.categoryName, required this.title});
 
-  final String categoryId;
+  final String categoryName;
   final String title;
 
   @override
@@ -42,8 +41,10 @@ class _CategoryApplianceScreenState extends State<CategoryApplianceScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<ApplianceCubit, ApplianceState>(
       builder: (context, state) {
-        final categoryAppliances = state.appliances.where((a) => a.categoryId == widget.categoryId).toList();
-        final hasSelection = state.totalItemsInCategory(widget.categoryId) > 0;
+        final isLoading = state.status == ApplianceLoadStatus.initial || state.status == ApplianceLoadStatus.loading;
+        final categoryId = state.categoryIdByName(widget.categoryName) ?? '';
+        final categoryAppliances = state.appliances.where((a) => a.categoryId == categoryId).toList();
+        final hasSelection = state.totalItemsInCategory(categoryId) > 0;
 
         return Scaffold(
           backgroundColor: AppColors.main,
@@ -69,8 +70,8 @@ class _CategoryApplianceScreenState extends State<CategoryApplianceScreen> {
                       SizedBox(height: 18.h),
                       if (hasSelection) ...[
                         LoadSummaryBanner(
-                          formattedLoad: ApplianceState.formatWatts(state.totalWattsInCategory(widget.categoryId)),
-                          totalItems: state.totalItemsInCategory(widget.categoryId),
+                          formattedLoad: ApplianceState.formatWatts(state.totalWattsInCategory(categoryId)),
+                          totalItems: state.totalItemsInCategory(categoryId),
                         ),
                         SizedBox(height: 18.h),
                       ],
@@ -86,20 +87,28 @@ class _CategoryApplianceScreenState extends State<CategoryApplianceScreen> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        ApplianceSelectableList(
-                          appliances: categoryAppliances,
-                          state: state,
-                          onQuantityChanged: (id, qty) => context.read<ApplianceCubit>().setQuantity(id, qty),
-                          onEditWattage: (a) => _editWattage(a, state),
-                        ),
+                        if (isLoading)
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 60.h),
+                            child: const Center(child: CircularProgressIndicator()),
+                          )
+                        else
+                          ApplianceSelectableList(
+                            appliances: categoryAppliances,
+                            state: state,
+                            onQuantityChanged: (id, qty) => context.read<ApplianceCubit>().setQuantity(id, qty),
+                            onEditWattage: (a) => _editWattage(a, state),
+                          ),
                         SizedBox(height: 60.h),
                         GestureDetector(
-                          onTap: hasSelection ? () {
+                          onTap: hasSelection
+                              ? () {
                             Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
                               MaterialPageRoute(builder: (_) => const DashboardScreen(initialIndex: 1)),
-                              (route) => false,
+                                  (route) => false,
                             );
-                          } : null,
+                          }
+                              : null,
                           child: Container(
                             width: 390.w,
                             height: 54.h,
